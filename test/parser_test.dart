@@ -26,6 +26,33 @@ void expectNumStatements(Program program, int expectedStatements) {
 
 }
 
+void testIntegerLiteral(Expression expression, int integerValue) {
+
+    expect(expression, new isInstanceOf<IntegerLiteral>());
+    IntegerLiteral literal = expression;
+
+    expect(literal.value, equals(integerValue));
+    expect(literal.tokenLiteral(), equals('$integerValue'));
+
+}
+
+void testPrefix(String input, String operator, int integerValue) {
+
+    Program program = parseProgramChecked(input);
+
+    expectNumStatements(program, 1);
+
+    expect(program.statements[0], new isInstanceOf<ExpressionStatement>());
+    ExpressionStatement statement = program.statements[0];
+
+    expect(statement.expression, new isInstanceOf<PrefixExpression>());
+    PrefixExpression expression = statement.expression;
+
+    expect(expression.operator, equals(operator));
+    testIntegerLiteral(expression.right, integerValue);
+
+}
+
 Program parseProgramChecked(String input) {
 
     Parser parser   = new Parser(new Lexer(input));
@@ -112,11 +139,14 @@ void main() {
         expect(program.statements[0], new isInstanceOf<ExpressionStatement>());
         ExpressionStatement statement = program.statements[0];
 
-        expect(statement.expression, new isInstanceOf<IntegerLiteral>());
-        IntegerLiteral literal = statement.expression;
+        testIntegerLiteral(statement.expression, 5);
 
-        expect(literal.value, equals(5));
-        expect(literal.tokenLiteral(), equals('5'));
+    });
+
+    test("test parsing prefix expressions", () {
+
+        testPrefix("!5;", "!", 5);
+        testPrefix("-15;", "-", 15);
 
     });
 
