@@ -16,7 +16,7 @@ void testLexer(List<Token> expected, String input) {
 
         Token expectedToken = expected[i];
         Token actualToken   = lexer.nextToken();
-        
+
         expect(actualToken.tokenType, expectedToken.tokenType, reason: "tests[$i] - tokentype wrong.");
         expect(actualToken.literal, expectedToken.literal, reason: "tests[$i] - literal wrong.");
 
@@ -26,7 +26,7 @@ void testLexer(List<Token> expected, String input) {
 
 void main() {
 
-    test("test lexer with input =+(){},;", () {
+    test("test lexer with input '=+(){},;'", () {
 
         String input = "=+(){},;";
 
@@ -46,14 +46,29 @@ void main() {
 
     });
 
-    test("test lexer with input containing whitespace + \t\n\r+", () {
+    test("test lexer with input '+\\t\\n\\r +'", () {
 
-        String input = "+ \t\n\r+";
+        String input = "+\t\n\r +";
 
         List<Token> expected = [
             t(Token.Plus, "+"),
             t(Token.Plus, "+"),
             t(Token.Eof,  "\0")
+        ];
+
+        testLexer(expected, input);
+
+    });
+
+    // TODO: Figure out how to get lexer to detect \0 as null character instead of numeric 0
+    test("test lexer with input '12345 23456 '", () {
+
+        String input = "12345 23456 ";
+
+        List<Token> expected = [
+            t(Token.Int, "12345"),
+            t(Token.Int, "23456"),
+            t(Token.Eof, "\0"),
         ];
 
         testLexer(expected, input);
