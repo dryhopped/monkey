@@ -2,9 +2,9 @@ import 'package:test/test.dart';
 import 'package:monkey/token/token.dart';
 import 'package:monkey/lexer/lexer.dart';
 
-Token t(String tokenType, String literal) {
+Token t(String type, String literal) {
 
-    return new Token(tokenType, literal);
+    return new Token(type, literal);
 
 }
 
@@ -17,7 +17,7 @@ void testLexer(List<Token> expected, String input) {
         Token expectedToken = expected[i];
         Token actualToken   = lexer.nextToken();
 
-        expect(actualToken.tokenType, expectedToken.tokenType, reason: "tests[$i] - tokentype wrong.");
+        expect(actualToken.type, expectedToken.type, reason: "tests[$i] - type wrong.");
         expect(actualToken.literal, expectedToken.literal, reason: "tests[$i] - literal wrong.");
 
     }
