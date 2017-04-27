@@ -9,6 +9,7 @@ class Parser {
     Lexer lexer;
     Token currentToken;
     Token peekToken;
+    List<String> errors = [];
 
     Parser(this.lexer) {
 
@@ -95,7 +96,14 @@ class Parser {
             return true;
         }
 
+        peekError(type);
         return false;
+
+    }
+
+    void peekError(String type) {
+
+        errors.add("expected next token to be $type, but got ${currentToken.type}.");
 
     }
 
