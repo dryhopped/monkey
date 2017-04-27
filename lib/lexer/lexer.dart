@@ -9,8 +9,17 @@ class Lexer {
     static final int tab      = code('\t');
     static final int newline  = code('\n');
     static final int carriage = code('\r');
+
+    // Code points for numeric characters
     static final int zero     = code('0');
     static final int nine     = code('9');
+
+    // Code points for alpha characters and _
+    static final int a = code('a');
+    static final int z = code('z');
+    static final int A = code('A');
+    static final int Z = code('Z');
+    static final int _ = code('_');
 
     String input;
 
@@ -80,6 +89,8 @@ class Lexer {
             default:
                 if (isDigit(ch)) {
                     return new Token(Token.Int, readInteger());
+                } else if (isAlpha(ch)) {
+                    return new Token(Token.Ident, readIdentifier());
                 }
 
                 return new Token(Token.Illegal, ch);
@@ -88,6 +99,20 @@ class Lexer {
 
         readChar();
         return token;
+
+    }
+
+    bool isAlpha(String ch) {
+
+        int c = ch.codeUnitAt(0);
+
+        return c >= a && c <= z || c >= A && c <= Z || c == _;
+
+    }
+
+    bool isAlphaNumeric(String ch) {
+
+        return isAlpha(ch) || isDigit(ch);
 
     }
 
@@ -105,6 +130,18 @@ class Lexer {
         int c = ch.codeUnitAt(0);
 
         return c == space || c == tab || c == newline || c == carriage;
+
+    }
+
+    String readIdentifier() {
+
+        int start = position;
+
+        while(isAlphaNumeric(ch)) {
+            readChar();
+        }
+
+        return input.substring(start, position);
 
     }
 

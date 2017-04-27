@@ -75,4 +75,20 @@ void main() {
 
     });
 
+    test("test lexer with input 'add foo_bar y1 _x '", () {
+
+        String input = "add foo_bar y1 _x ";
+
+        List<Token> expected = [
+            t(Token.Ident, "add"),
+            t(Token.Ident, "foo_bar"),
+            t(Token.Ident, "y1"),
+            t(Token.Ident, "_x"),
+            t(Token.Eof, "\0"),
+        ];
+
+        testLexer(expected, input);
+
+    });
+
 }
