@@ -26,6 +26,16 @@ void expectNumStatements(Program program, int expectedStatements) {
 
 }
 
+Program parseProgramChecked(String input) {
+
+    Parser parser   = new Parser(new Lexer(input));
+    Program program = parser.parseProgram();
+    checkParserErrors(parser);
+
+    return program;
+
+}
+
 void testIntegerLiteral(Expression expression, int integerValue) {
 
     expect(expression, new isInstanceOf<IntegerLiteral>());
@@ -33,23 +43,6 @@ void testIntegerLiteral(Expression expression, int integerValue) {
 
     expect(literal.value, equals(integerValue));
     expect(literal.tokenLiteral(), equals('$integerValue'));
-
-}
-
-void testPrefix(String input, String operator, int integerValue) {
-
-    Program program = parseProgramChecked(input);
-
-    expectNumStatements(program, 1);
-
-    expect(program.statements.first, new isInstanceOf<ExpressionStatement>());
-    ExpressionStatement statement = program.statements.first;
-
-    expect(statement.expression, new isInstanceOf<PrefixExpression>());
-    PrefixExpression expression = statement.expression;
-
-    expect(expression.operator, equals(operator));
-    testIntegerLiteral(expression.right, integerValue);
 
 }
 
@@ -71,13 +64,28 @@ void testInfix(String input, int leftValue, String operator, int rightValue) {
 
 }
 
-Program parseProgramChecked(String input) {
+void testPrecedence(String input, String expected) {
 
-    Parser parser   = new Parser(new Lexer(input));
-    Program program = parser.parseProgram();
-    checkParserErrors(parser);
+    Program program = parseProgramChecked(input);
 
-    return program;
+    expect(program.toString(), equals(expected));
+
+}
+
+void testPrefix(String input, String operator, int integerValue) {
+
+    Program program = parseProgramChecked(input);
+
+    expectNumStatements(program, 1);
+
+    expect(program.statements.first, new isInstanceOf<ExpressionStatement>());
+    ExpressionStatement statement = program.statements.first;
+
+    expect(statement.expression, new isInstanceOf<PrefixExpression>());
+    PrefixExpression expression = statement.expression;
+
+    expect(expression.operator, equals(operator));
+    testIntegerLiteral(expression.right, integerValue);
 
 }
 
@@ -178,6 +186,22 @@ void main() {
         testInfix("5 < 5;", 5, "<", 5);
         testInfix("5 == 5;", 5, "==", 5);
         testInfix("5 != 5;", 5, "!=", 5);
+
+    });
+
+    test("test operator precedence parsing", () {
+
+        testPrecedence("-a * b", "((-a) * b)");
+        testPrecedence("!-a", "(!(-a))");
+        testPrecedence("a + b + c", "((a + b) + c)");
+        testPrecedence("a * b * c", "((a * b) * c)");
+        testPrecedence("a * b / c", "((a * b) / c)");
+        testPrecedence("a + b / c", "(a + (b / c))");
+        testPrecedence("a + b * c + d / e - f", "(((a + (b * c)) + (d / e)) - f)");
+        testPrecedence("3 + 4; -5 * 5", "(3 + 4)((-5) * 5)");
+        testPrecedence("5 > 4 == 3 < 4", "((5 > 4) == (3 < 4))");
+        testPrecedence("5 < 4 != 3 > 4", "((5 < 4) != (3 > 4))");
+        testPrecedence("3 + 4 * 5 == 3 * 1 + 4 * 5", "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))");
 
     });
 

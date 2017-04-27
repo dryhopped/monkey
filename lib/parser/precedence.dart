@@ -1,16 +1,16 @@
 enum Precedence {
     _,
     Lowest,
-    // == !=
+    /// == !=
     Equals,
-    // > <
+    /// > <
     LessGreater,
-    // + -
+    /// + -
     Sum,
-    // * /
+    /// * /
     Product,
-    // -x !x
+    /// -x !x
     Prefix,
-    // myFunction(x)
+    /// myFunction(x)
     Call
 }
