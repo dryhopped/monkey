@@ -22,6 +22,16 @@ class Program extends Node {
 
     }
 
+    @override
+    String toString() {
+
+        StringBuffer sb = new StringBuffer();
+        statements.forEach((statement) => sb.write(statement));
+
+        return sb.toString();
+
+    }
+
 }
 
 class Identifier extends Expression {
@@ -32,11 +42,10 @@ class Identifier extends Expression {
     Identifier(this.token, this.value);
 
     @override
-    String tokenLiteral() {
+    String tokenLiteral() => token.literal;
 
-        return token.literal;
-
-    }
+    @override
+    String toString() => value;
 
 }
 
@@ -49,11 +58,10 @@ class LetStatement extends Statement {
     LetStatement(this.token);
 
     @override
-    String tokenLiteral() {
+    String tokenLiteral() => token.literal;
 
-        return token.literal;
-
-    }
+    @override
+    String toString() => "$tokenLiteral $name = ${value ?? ''};";
 
 }
 
@@ -65,10 +73,22 @@ class ReturnStatement extends Statement {
     ReturnStatement(this.token);
 
     @override
-    String tokenLiteral() {
+    String tokenLiteral() => token.literal;
 
-        return token.literal;
-        
-    }
+    @override
+    String toString() => "$tokenLiteral ${value ?? ''};";
+
+}
+
+class ExpressionStatement extends Statement {
+
+    Token token; // The first token of the expression
+    Expression expression;
+
+    @override
+    String tokenLiteral => token.literal;
+
+    @override
+    String toString() => "${expression ?? ''}";
 
 }
