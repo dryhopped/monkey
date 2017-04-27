@@ -43,6 +43,9 @@ void main() {
             } else {
                 return false;
             }
+
+            10 == 10;
+            10 != 9;
         """;
 
         List<Token> expected = [
@@ -111,6 +114,14 @@ void main() {
             t(Token.False, "false"),
             t(Token.SemiColon, ";"),
             t(Token.RightBrace, "}"),
+            t(Token.Int, "10"),
+            t(Token.Equal, "=="),
+            t(Token.Int, "10"),
+            t(Token.SemiColon, ";"),
+            t(Token.Int, "10"),
+            t(Token.NotEqual, "!="),
+            t(Token.Int, "9"),
+            t(Token.SemiColon, ";"),
             t(Token.Eof, "␀")
         ];
 

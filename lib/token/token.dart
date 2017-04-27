@@ -18,6 +18,8 @@ class Token {
                  Asterisk   = "*",
                  Lt         = "<",
                  Gt         = ">",
+                 Equal      = "==",
+                 NotEqual   = "!=",
 
                  // Delimiters
                  Comma      = ",",

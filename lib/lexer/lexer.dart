@@ -63,7 +63,13 @@ class Lexer {
         switch (ch) {
 
             case '=':
-                token = new Token(Token.Assign, ch);
+                if (peekChar() == '=') {
+                    String temp = ch;
+                    readChar();
+                    token = new Token(Token.Equal, temp + ch);
+                } else {
+                    token = new Token(Token.Assign, ch);
+                }
                 break;
             case ';':
                 token = new Token(Token.SemiColon, ch);
@@ -84,7 +90,13 @@ class Lexer {
                 token = new Token(Token.Minus, ch);
                 break;
             case '!':
-                token = new Token(Token.Bang, ch);
+                if (peekChar() == '=') {
+                    String temp = ch;
+                    readChar();
+                    token = new Token(Token.NotEqual, temp + ch);
+                } else {
+                    token = new Token(Token.Bang, ch);
+                }
                 break;
             case '/':
                 token = new Token(Token.Slash, ch);
@@ -158,6 +170,16 @@ class Lexer {
         int c = ch.codeUnitAt(0);
 
         return c == space || c == tab || c == newline || c == carriage;
+
+    }
+
+    String peekChar() {
+
+        if (readPosition >= input.length) {
+            return null;
+        } else {
+            return input[readPosition];
+        }
 
     }
 
