@@ -22,6 +22,7 @@ class Parser {
         nextToken();
 
         registerPrefix(Token.Ident, parseIdentifier);
+        registerPrefix(Token.Int, parseIntegerLiteral);
 
     }
 
@@ -93,6 +94,26 @@ class Parser {
     }
 
     Expression parseIdentifier() => new Identifier(currentToken, currentToken.literal);
+
+    Expression parseIntegerLiteral() {
+
+        IntegerLiteral literal = new IntegerLiteral(currentToken);
+
+        try {
+
+            int value = int.parse(currentToken.literal);
+            literal.value = value;
+
+            return literal;
+
+        } catch (e) {
+
+            errors.add("could not parse ${currentToken.literal} as integer.");
+            return null;
+
+        }
+
+    }
 
     LetStatement parseLetStatement() {
 

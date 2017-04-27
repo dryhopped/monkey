@@ -8,9 +8,27 @@ abstract class Node {
 
 }
 
-abstract class Statement extends Node {}
+abstract class Statement extends Node {
 
-abstract class Expression extends Node {}
+    Token token;
+
+    Statement(this.token);
+
+    @override
+    String tokenLiteral() => token.literal;
+
+}
+
+abstract class Expression extends Node {
+
+    Token token;
+
+    Expression(this.token);
+
+    @override
+    String tokenLiteral() => token.literal;
+
+}
 
 class Program extends Node {
 
@@ -36,13 +54,9 @@ class Program extends Node {
 
 class Identifier extends Expression {
 
-    Token token; // The Ident token
     String value;
 
-    Identifier(this.token, this.value);
-
-    @override
-    String tokenLiteral() => token.literal;
+    Identifier(Token token, this.value) : super(token);
 
     @override
     String toString() => value;
@@ -51,14 +65,10 @@ class Identifier extends Expression {
 
 class LetStatement extends Statement {
 
-    Token token; // The Let token
     Identifier name;
     Expression value;
 
-    LetStatement(this.token);
-
-    @override
-    String tokenLiteral() => token.literal;
+    LetStatement(Token token) : super(token);
 
     @override
     String toString() => "${tokenLiteral()} $name = ${value ?? ''};";
@@ -67,13 +77,9 @@ class LetStatement extends Statement {
 
 class ReturnStatement extends Statement {
 
-    Token token; // The Return token
     Expression value;
 
-    ReturnStatement(this.token);
-
-    @override
-    String tokenLiteral() => token.literal;
+    ReturnStatement(Token token) : super(token);
 
     @override
     String toString() => "${tokenLiteral()} ${value ?? ''};";
@@ -82,15 +88,22 @@ class ReturnStatement extends Statement {
 
 class ExpressionStatement extends Statement {
 
-    Token token; // The first token of the expression
     Expression expression;
 
-    ExpressionStatement(this.token);
-
-    @override
-    String tokenLiteral() => token.literal;
+    ExpressionStatement(Token token) : super(token);
 
     @override
     String toString() => "${expression ?? ''}";
+
+}
+
+class IntegerLiteral extends Expression {
+
+    int value;
+
+    IntegerLiteral(Token token) : super(token);
+
+    @override
+    String toString() => token.literal;
 
 }
