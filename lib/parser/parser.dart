@@ -23,6 +23,8 @@ class Parser {
 
         registerPrefix(Token.Ident, parseIdentifier);
         registerPrefix(Token.Int, parseIntegerLiteral);
+        registerPrefix(Token.Bang, parsePrefixExpression);
+        registerPrefix(Token.Minus, parsePrefixExpression);
 
     }
 
@@ -87,7 +89,12 @@ class Parser {
 
         Function prefix = prefixParseFns[currentToken.type];
 
-        if (prefix == null) return null;
+        if (prefix == null) {
+
+            noPrefixParseFnError(currentToken.type);
+            return null;
+
+        }
 
         return prefix();
 
@@ -132,6 +139,17 @@ class Parser {
 
     }
 
+    PrefixExpression parsePrefixExpression() {
+
+        PrefixExpression expression = new PrefixExpression(currentToken, currentToken.literal);
+        nextToken();
+
+        expression.right = parseExpression(Precedence.Prefix);
+
+        return expression;
+
+    }
+
     ReturnStatement parseReturnStatement() {
 
         ReturnStatement statement = new ReturnStatement(currentToken);
@@ -159,6 +177,12 @@ class Parser {
 
         peekError(type);
         return false;
+
+    }
+
+    void noPrefixParseFnError(String type) {
+
+        errors.add("no prefix parse function for $type found.");
 
     }
 
