@@ -29,12 +29,22 @@ class Token {
                  RightBrace = "}",
 
                  // Keywords
+                 Else       = "Else",
+                 False      = "False",
                  Function   = "Function",
-                 Let        = "Let";
+                 If         = "If",
+                 Let        = "Let",
+                 Return     = "Return",
+                 True       = "True";
 
     static const Map<String, String> keywords = const {
-        "fn":  Token.Function,
-        "let": Token.Let,
+        "else":   Token.Else,
+        "false":  Token.False,
+        "fn":     Token.Function,
+        "if":     Token.If,
+        "let":    Token.Let,
+        "return": Token.Return,
+        "true":   Token.True
     };
 
     String tokenType;
