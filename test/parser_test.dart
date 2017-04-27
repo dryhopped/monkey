@@ -22,7 +22,7 @@ void checkParserErrors(Parser parser) {
 void expectNumStatements(Program program, int expectedStatements) {
 
     int numStatements = program.statements.length;
-    expect(numStatements, equals(3), reason: "program.statements does not contain 3 statements. got=$numStatements.");
+    expect(numStatements, equals(expectedStatements), reason: "program.statements does not contain 3 statements. got=$numStatements.");
 
 }
 
@@ -81,6 +81,27 @@ void main() {
             expect(statement.tokenLiteral(), equals('return'));
 
         });
+
+    });
+
+    test("test identifier expression", () {
+
+        String input = 'foobar';
+
+        Parser parser = new Parser(new Lexer(input));
+        Program program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        expectNumStatements(program, 1);
+
+        expect(program.statements[0], new isInstanceOf<ExpressionStatement>());
+        ExpressionStatement statement = program.statements[0];
+
+        expect(statement.expression, new isInstanceOf<Identifier>());
+        Identifier ident = statement.expression;
+
+        expect(ident.value, equals('foobar'));
+        expect(ident.tokenLiteral(), equals('foobar'));
 
     });
 

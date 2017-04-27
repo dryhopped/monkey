@@ -3,18 +3,25 @@ library parser;
 import 'package:monkey/ast/ast.dart';
 import 'package:monkey/lexer/lexer.dart';
 import 'package:monkey/token/token.dart';
+import 'package:monkey/parser/precedence.dart';
 
 class Parser {
 
     Lexer lexer;
     Token currentToken;
     Token peekToken;
+
     List<String> errors = [];
+
+    Map<String, Function> prefixParseFns = {};
+    Map<String, Function> infixParseFns = {};
 
     Parser(this.lexer) {
 
         nextToken();
         nextToken();
+
+        registerPrefix(Token.Ident, parseIdentifier);
 
     }
 
@@ -57,11 +64,35 @@ class Parser {
                 return parseReturnStatement();
 
             default:
-                return null;
+                return parseExpressionStatement();
 
         }
 
     }
+
+    ExpressionStatement parseExpressionStatement() {
+
+        ExpressionStatement statement = new ExpressionStatement(currentToken);
+
+        statement.expression = parseExpression(Precedence.Lowest);
+
+        if (peekTokenIs(Token.SemiColon)) nextToken();
+
+        return statement;
+
+    }
+
+    Expression parseExpression(Precedence precedence) {
+
+        Function prefix = prefixParseFns[currentToken.type];
+
+        if (prefix == null) return null;
+
+        return prefix();
+
+    }
+
+    Expression parseIdentifier() => new Identifier(currentToken, currentToken.literal);
 
     LetStatement parseLetStatement() {
 
@@ -98,12 +129,6 @@ class Parser {
 
     }
 
-    bool peekTokenIs(String type) {
-
-        return peekToken.type == type;
-
-    }
-
     bool expectPeek(String type) {
 
         if (peekToken.type == type) {
@@ -119,6 +144,23 @@ class Parser {
     void peekError(String type) {
 
         errors.add("expected next token to be $type, but got ${currentToken.type}.");
+
+    }
+
+    bool peekTokenIs(String type) {
+
+        return peekToken.type == type;
+
+    }
+
+    void registerInfix(String type, Function infixParseFn) {
+
+        infixParseFns[type] = infixParseFn;
+    }
+
+    void registerPrefix(String type, Function prefixParseFn) {
+
+        prefixParseFns[type] = prefixParseFn;
 
     }
 
