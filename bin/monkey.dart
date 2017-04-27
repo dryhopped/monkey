@@ -17,9 +17,9 @@ void start() {
         }
 
         Lexer lexer = new Lexer(inputText);
-        for (Token token = lexer.nextToken(); token.tokenType != Token.Eof; token = lexer.nextToken()) {
+        for (Token token = lexer.nextToken(); token.type != Token.Eof; token = lexer.nextToken()) {
 
-            if (token.tokenType == Token.Illegal) {
+            if (token.type == Token.Illegal) {
                 break;
             }
 
