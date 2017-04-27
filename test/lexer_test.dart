@@ -90,4 +90,25 @@ void main() {
 
     });
 
+    test("test lexer with input 'let myFunc = fn() {};'", () {
+
+        String input = "let myFunc = fn() {};";
+
+        List<Token> expected = [
+            t(Token.Let, "let"),
+            t(Token.Ident, "myFunc"),
+            t(Token.Assign, "="),
+            t(Token.Function, "fn"),
+            t(Token.LeftParen, "("),
+            t(Token.RightParen, ")"),
+            t(Token.LeftBrace, "{"),
+            t(Token.RightBrace, "}"),
+            t(Token.SemiColon, ";"),
+            t(Token.Eof,  "␀")
+        ];
+
+        testLexer(expected, input);
+
+    });
+
 }

@@ -93,7 +93,7 @@ class Lexer {
                 if (isDigit(ch)) {
                     return new Token(Token.Int, readInteger());
                 } else if (isAlpha(ch)) {
-                    return new Token(Token.Ident, readIdentifier());
+                    return readIdentifier();
                 }
 
                 return new Token(Token.Illegal, ch);
@@ -143,7 +143,7 @@ class Lexer {
 
     }
 
-    String readIdentifier() {
+    Token readIdentifier() {
 
         int start = position;
 
@@ -151,7 +151,9 @@ class Lexer {
             readChar();
         }
 
-        return input.substring(start, position);
+        String literal = input.substring(start, position);
+
+        return new Token(Token.lookupIdent(literal), literal);
 
     }
 
