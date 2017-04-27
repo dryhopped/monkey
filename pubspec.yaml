@@ -1,0 +1,8 @@
+name: monkey
+version: 0.0.1
+description: Implementing the Monkey programming language interpreter in Dart.
+author: Luke Scalf
+homepage: https://lukescalf.me
+dependencies:
+dev_dependencies:
+    test: ^0.12.18+1
