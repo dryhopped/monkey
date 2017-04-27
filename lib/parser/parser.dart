@@ -16,6 +16,17 @@ class Parser {
     Map<String, Function> prefixParseFns = {};
     Map<String, Function> infixParseFns = {};
 
+    Map<String, Precedence> precedences = {
+        Token.Equal:    Precedence.Equals,
+        Token.NotEqual: Precedence.Equals,
+        Token.Lt:       Precedence.LessGreater,
+        Token.Gt:       Precedence.LessGreater,
+        Token.Plus:     Precedence.Sum,
+        Token.Minus:    Precedence.Sum,
+        Token.Slash:    Precedence.Product,
+        Token.Asterisk: Precedence.Product
+    };
+
     Parser(this.lexer) {
 
         nextToken();
@@ -25,6 +36,15 @@ class Parser {
         registerPrefix(Token.Int, parseIntegerLiteral);
         registerPrefix(Token.Bang, parsePrefixExpression);
         registerPrefix(Token.Minus, parsePrefixExpression);
+
+        registerInfix(Token.Plus, parseInfixExpression);
+        registerInfix(Token.Minus, parseInfixExpression);
+        registerInfix(Token.Slash, parseInfixExpression);
+        registerInfix(Token.Asterisk, parseInfixExpression);
+        registerInfix(Token.Equal, parseInfixExpression);
+        registerInfix(Token.NotEqual, parseInfixExpression);
+        registerInfix(Token.Lt, parseInfixExpression);
+        registerInfix(Token.Gt, parseInfixExpression);
 
     }
 
@@ -96,11 +116,35 @@ class Parser {
 
         }
 
-        return prefix();
+        Expression left = prefix();
+
+        while (!peekTokenIs(Token.SemiColon) && precedence.index < peekPrecedence().index) {
+
+            Function infix = infixParseFns[peekToken.type];
+            if (infix == null) return left;
+
+            nextToken();
+            left = infix(left);
+
+        }
+
+        return left;
 
     }
 
     Expression parseIdentifier() => new Identifier(currentToken, currentToken.literal);
+
+    InfixExpression parseInfixExpression(Expression left) {
+
+        InfixExpression expression = new InfixExpression(currentToken, currentToken.literal, left);
+        Precedence precedence = currentPrecedence();
+        nextToken();
+
+        expression.right = parseExpression(precedence);
+
+        return expression;
+
+    }
 
     Expression parseIntegerLiteral() {
 
@@ -162,6 +206,8 @@ class Parser {
 
     }
 
+    Precedence currentPrecedence() => precedences[currentToken.type] ?? Precedence.Lowest;
+
     bool currentTokenIs(String type) {
 
         return currentToken.type == type;
@@ -191,6 +237,8 @@ class Parser {
         errors.add("expected next token to be $type, but got ${currentToken.type}.");
 
     }
+
+    Precedence peekPrecedence() => precedences[peekToken.type] ?? Precedence.Lowest;
 
     bool peekTokenIs(String type) {
 
