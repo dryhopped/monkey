@@ -119,3 +119,16 @@ class PrefixExpression extends Expression {
     String toString() => "($operator$right)";
 
 }
+
+class InfixExpression extends Expression {
+
+    String operator;
+    Expression left;
+    Expression right;
+
+    InfixExpression(Token token, this.operator, this.left) : super(token);
+
+    @override
+    String toString() => "($left $operator $right)";
+
+}
