@@ -8,9 +8,27 @@ abstract class Node {
 
 }
 
-abstract class Statement extends Node {}
+abstract class Statement extends Node {
 
-abstract class Expression extends Node {}
+    Token token;
+
+    Statement(this.token);
+
+    @override
+    String tokenLiteral() => token.literal;
+
+}
+
+abstract class Expression extends Node {
+
+    Token token;
+
+    Expression(this.token);
+
+    @override
+    String tokenLiteral() => token.literal;
+
+}
 
 class Program extends Node {
 
@@ -22,37 +40,95 @@ class Program extends Node {
 
     }
 
+    @override
+    String toString() {
+
+        StringBuffer sb = new StringBuffer();
+        statements.forEach((statement) => sb.write(statement));
+
+        return sb.toString();
+
+    }
+
 }
 
 class Identifier extends Expression {
 
-    Token token; // The Ident token
     String value;
 
-    Identifier(this.token, this.value);
+    Identifier(Token token, this.value) : super(token);
 
     @override
-    String tokenLiteral() {
-
-        return token.literal;
-
-    }
+    String toString() => value;
 
 }
 
 class LetStatement extends Statement {
 
-    Token token; // The Let token
     Identifier name;
     Expression value;
 
-    LetStatement(this.token);
+    LetStatement(Token token) : super(token);
 
     @override
-    String tokenLiteral() {
+    String toString() => "${tokenLiteral()} $name = ${value ?? ''};";
 
-        return token.literal;
+}
 
-    }
+class ReturnStatement extends Statement {
+
+    Expression value;
+
+    ReturnStatement(Token token) : super(token);
+
+    @override
+    String toString() => "${tokenLiteral()} ${value ?? ''};";
+
+}
+
+class ExpressionStatement extends Statement {
+
+    Expression expression;
+
+    ExpressionStatement(Token token) : super(token);
+
+    @override
+    String toString() => "${expression ?? ''}";
+
+}
+
+class IntegerLiteral extends Expression {
+
+    int value;
+
+    IntegerLiteral(Token token) : super(token);
+
+    @override
+    String toString() => token.literal;
+
+}
+
+class PrefixExpression extends Expression {
+
+    String operator;
+    Expression right;
+
+    PrefixExpression(Token token, this.operator) : super(token);
+
+    @override
+    String toString() => "($operator$right)";
+
+}
+
+class InfixExpression extends Expression {
+
+    String operator;
+    Expression left;
+    Expression right;
+
+    InfixExpression(Token token, this.operator, this.left) : super(token);
+
+    @override
+    String toString() => "($left $operator $right)";
 
 }

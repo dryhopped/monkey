@@ -4,35 +4,35 @@ import 'package:monkey/token/token.dart';
 
 class Lexer {
 
-    // Code points for whitespace characters
+    /// Code points for whitespace characters
     static final int space    = code(' ');
     static final int tab      = code('\t');
     static final int newline  = code('\n');
     static final int carriage = code('\r');
 
-    // Code points for numeric characters
+    /// Code points for numeric characters
     static final int zero     = code('0');
     static final int nine     = code('9');
 
-    // Code points for alpha characters and _
+    /// Code points for alpha characters and _
     static final int a = code('a');
     static final int z = code('z');
     static final int A = code('A');
     static final int Z = code('Z');
     static final int _ = code('_');
 
-    // Code point for null character \0
+    /// Code point for null character \0
     static final int nil = code('␀');
 
     String input;
 
-    // current position in input (points to current char)
+    /// current position in input (points to current char)
     int position = 0;
 
-    // current reading position in input (after current char)
+    /// current reading position in input (after current char)
     int readPosition = 0;
 
-    // current char under examination
+    /// current char under examination
     String ch;
 
     Lexer(this.input) {
