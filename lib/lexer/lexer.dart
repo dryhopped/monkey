@@ -9,6 +9,8 @@ class Lexer {
     static final int tab      = code('\t');
     static final int newline  = code('\n');
     static final int carriage = code('\r');
+    static final int zero     = code('0');
+    static final int nine     = code('9');
 
     String input;
 
@@ -75,6 +77,12 @@ class Lexer {
             case '\0':
                 token = new Token(Token.Eof, ch);
                 break;
+            default:
+                if (isDigit(ch)) {
+                    return new Token(Token.Int, readInteger());
+                }
+
+                return new Token(Token.Illegal, ch);
 
         }
 
@@ -83,11 +91,12 @@ class Lexer {
 
     }
 
-    void skipWhitespace() {
+    bool isDigit(String ch) {
 
-        while (isWhitespace(ch)) {
-            readChar();
-        }
+        // TODO: Figure out how to get lexer to detect \0 as null character instead of numeric 0
+        int c = ch.codeUnitAt(0);
+
+        return c >= zero && c <= nine;
 
     }
 
@@ -96,6 +105,26 @@ class Lexer {
         int c = ch.codeUnitAt(0);
 
         return c == space || c == tab || c == newline || c == carriage;
+
+    }
+
+    String readInteger() {
+
+        int start = position;
+
+        while (isDigit(ch)) {
+            readChar();
+        }
+
+        return input.substring(start, position);
+
+    }
+
+    void skipWhitespace() {
+
+        while (isWhitespace(ch)) {
+            readChar();
+        }
 
     }
 
