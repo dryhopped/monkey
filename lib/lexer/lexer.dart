@@ -4,6 +4,12 @@ import 'package:monkey/token/token.dart';
 
 class Lexer {
 
+    // Code points for whitespace characters
+    static final int space    = code(' ');
+    static final int tab      = code('\t');
+    static final int newline  = code('\n');
+    static final int carriage = code('\r');
+
     String input;
 
     // current position in input (points to current char)
@@ -35,6 +41,8 @@ class Lexer {
     }
 
     Token nextToken() {
+
+        skipWhitespace();
 
         Token token;
 
@@ -72,6 +80,28 @@ class Lexer {
 
         readChar();
         return token;
+
+    }
+
+    void skipWhitespace() {
+
+        while (isWhitespace(ch)) {
+            readChar();
+        }
+
+    }
+
+    bool isWhitespace(String ch) {
+
+        int c = ch.codeUnitAt(0);
+
+        return c == space || c == tab || c == newline || c == carriage;
+
+    }
+
+    static int code(String ch) {
+
+        return ch.codeUnitAt(0);
 
     }
 
