@@ -12,6 +12,12 @@ class Token {
                  // Operators
                  Assign     = "=",
                  Plus       = "+",
+                 Minus      = "-",
+                 Bang       = "!",
+                 Slash      = "/",
+                 Asterisk   = "*",
+                 Lt         = "<",
+                 Gt         = ">",
 
                  // Delimiters
                  Comma      = ",",

@@ -80,6 +80,24 @@ class Lexer {
             case '+':
                 token = new Token(Token.Plus, ch);
                 break;
+            case '-':
+                token = new Token(Token.Minus, ch);
+                break;
+            case '!':
+                token = new Token(Token.Bang, ch);
+                break;
+            case '/':
+                token = new Token(Token.Slash, ch);
+                break;
+            case '*':
+                token = new Token(Token.Asterisk, ch);
+                break;
+            case '<':
+                token = new Token(Token.Lt, ch);
+                break;
+            case '>':
+                token = new Token(Token.Gt, ch);
+                break;
             case '{':
                 token = new Token(Token.LeftBrace, ch);
                 break;
