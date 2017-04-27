@@ -26,6 +26,11 @@ class Token {
                  Function   = "Function",
                  Let        = "Let";
 
+    static const Map<String, String> keywords = const {
+        "fn":  Token.Function,
+        "let": Token.Let,
+    };
+
     String tokenType;
     String literal;
 
@@ -33,5 +38,13 @@ class Token {
 
     bool operator ==(o) =>
         o is Token && o.tokenType == tokenType && o.literal == literal;
+
+    static String lookupIdent(String ident) {
+
+        String value = keywords[ident];
+
+        return value == null ? Token.Ident : value;
+
+    }
 
 }
