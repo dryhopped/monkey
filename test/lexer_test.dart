@@ -39,7 +39,7 @@ void main() {
             t(Token.RightBrace, "}"),
             t(Token.Comma,      ","),
             t(Token.SemiColon,  ";"),
-            t(Token.Eof,        "\0")
+            t(Token.Eof,        "␀")
         ];
 
         testLexer(expected, input);
@@ -53,38 +53,37 @@ void main() {
         List<Token> expected = [
             t(Token.Plus, "+"),
             t(Token.Plus, "+"),
-            t(Token.Eof,  "\0")
+            t(Token.Eof,  "␀")
         ];
 
         testLexer(expected, input);
 
     });
 
-    // TODO: Figure out how to get lexer to detect \0 as null character instead of numeric 0
-    test("test lexer with input '12345 23456 '", () {
+    test("test lexer with input '12345 23456'", () {
 
-        String input = "12345 23456 ";
+        String input = "12345 23456";
 
         List<Token> expected = [
             t(Token.Int, "12345"),
             t(Token.Int, "23456"),
-            t(Token.Eof, "\0"),
+            t(Token.Eof, "␀"),
         ];
 
         testLexer(expected, input);
 
     });
 
-    test("test lexer with input 'add foo_bar y1 _x '", () {
+    test("test lexer with input 'add foo_bar y1 _x'", () {
 
-        String input = "add foo_bar y1 _x ";
+        String input = "add foo_bar y1 _x";
 
         List<Token> expected = [
             t(Token.Ident, "add"),
             t(Token.Ident, "foo_bar"),
             t(Token.Ident, "y1"),
             t(Token.Ident, "_x"),
-            t(Token.Eof, "\0"),
+            t(Token.Eof, "␀"),
         ];
 
         testLexer(expected, input);

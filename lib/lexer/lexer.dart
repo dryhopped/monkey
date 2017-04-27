@@ -21,6 +21,9 @@ class Lexer {
     static final int Z = code('Z');
     static final int _ = code('_');
 
+    // Code point for null character \0
+    static final int nil = code('␀');
+
     String input;
 
     // current position in input (points to current char)
@@ -41,7 +44,7 @@ class Lexer {
     void readChar() {
 
         if (readPosition >= input.length) {
-            ch = '\0';
+            ch = '␀';
         } else {
             ch = input[readPosition];
         }
@@ -83,7 +86,7 @@ class Lexer {
             case '}':
                 token = new Token(Token.RightBrace, ch);
                 break;
-            case '\0':
+            case '␀':
                 token = new Token(Token.Eof, ch);
                 break;
             default:
@@ -116,9 +119,16 @@ class Lexer {
 
     }
 
+    bool isAtEnd() {
+
+        int c = ch.codeUnitAt(0);
+
+        return c == nil;
+
+    }
+
     bool isDigit(String ch) {
 
-        // TODO: Figure out how to get lexer to detect \0 as null character instead of numeric 0
         int c = ch.codeUnitAt(0);
 
         return c >= zero && c <= nine;
@@ -137,7 +147,7 @@ class Lexer {
 
         int start = position;
 
-        while(isAlphaNumeric(ch)) {
+        while(isAlphaNumeric(ch) && !isAtEnd()) {
             readChar();
         }
 
@@ -149,7 +159,7 @@ class Lexer {
 
         int start = position;
 
-        while (isDigit(ch)) {
+        while (isDigit(ch) && !isAtEnd()) {
             readChar();
         }
 
@@ -159,7 +169,7 @@ class Lexer {
 
     void skipWhitespace() {
 
-        while (isWhitespace(ch)) {
+        while (isWhitespace(ch) && !isAtEnd()) {
             readChar();
         }
 
