@@ -4,17 +4,6 @@ import 'package:monkey/ast/ast.dart';
 import 'package:monkey/lexer/lexer.dart';
 import 'package:monkey/parser/parser.dart';
 
-void testLetStatement(Statement statement, String expectedIdentifier) {
-
-    expect(statement.tokenLiteral(), equals('let'));
-
-    LetStatement letStatement = statement;
-
-    expect(letStatement.name.value, equals(expectedIdentifier));
-    expect(letStatement.name.tokenLiteral(), equals(expectedIdentifier));
-
-}
-
 void checkParserErrors(Parser parser) {
 
     if (parser.errors.isEmpty) {
@@ -30,6 +19,13 @@ void checkParserErrors(Parser parser) {
 
 }
 
+void expectNumStatements(Program program, int expectedStatements) {
+
+    int numStatements = program.statements.length;
+    expect(numStatements, equals(3), reason: "program.statements does not contain 3 statements. got=$numStatements.");
+
+}
+
 void main() {
 
     test("test let statements", () {
@@ -40,24 +36,51 @@ void main() {
             let foobar = 838383;
         """;
 
-        Lexer lexer     = new Lexer(input);
-        Parser parser   = new Parser(lexer);
+        Parser parser   = new Parser(new Lexer(input));
         Program program = parser.parseProgram();
         checkParserErrors(parser);
 
         expect(program, isNotNull, reason: "parseProgram() returned null");
-
-        var numStatements = program.statements.length;
-        expect(numStatements, equals(3), reason: "program.statements does not contain 3 statements. got=$numStatements.");
+        expectNumStatements(program, 3);
 
         List<String> identifiers = ['x', 'y', 'foobar'];
 
-        for (int i = 0; i < identifiers.length; i++) {
+        program.statements.asMap().forEach((i, statement) {
 
-            Statement statement = program.statements[i];
-            testLetStatement(statement, identifiers[i]);
+            expect(statement.tokenLiteral(), equals('let'));
 
-        }
+            LetStatement letStatement = statement;
+
+            expect(letStatement.name.value, equals(identifiers[i]));
+            expect(letStatement.name.tokenLiteral(), equals(identifiers[i]));
+
+        });
+
+    });
+
+    test("test return statements", () {
+
+        String input = """
+            return 5;
+            return 10;
+            return 993322;
+        """;
+
+        Parser parser   = new Parser(new Lexer(input));
+        Program program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        expect(program, isNotNull, reason: "parseProgram() returned null");
+        expectNumStatements(program, 3);
+
+        List<String> identifiers = ['x', 'y', 'foobar'];
+
+        program.statements.forEach((statement) {
+
+            expect(statement, new isInstanceOf<ReturnStatement>());
+            expect(statement.tokenLiteral(), equals('return'));
+
+        });
 
     });
 

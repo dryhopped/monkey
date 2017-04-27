@@ -53,6 +53,9 @@ class Parser {
             case Token.Let:
                 return parseLetStatement();
 
+            case Token.Return:
+                return parseReturnStatement();
+
             default:
                 return null;
 
@@ -71,7 +74,19 @@ class Parser {
         if (!expectPeek(Token.Assign)) return null;
 
         // TODO: We're skipping the expressions until we encounter a semicolon.
-        if (!currentTokenIs(Token.SemiColon)) nextToken();
+        while (!currentTokenIs(Token.SemiColon)) nextToken();
+
+        return statement;
+
+    }
+
+    ReturnStatement parseReturnStatement() {
+
+        ReturnStatement statement = new ReturnStatement(currentToken);
+        nextToken();
+
+        // TODO: We're skipping the expressions until we encounter a semicolon.
+        while (!currentTokenIs(Token.SemiColon)) nextToken();
 
         return statement;
 

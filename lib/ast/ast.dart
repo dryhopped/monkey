@@ -56,3 +56,19 @@ class LetStatement extends Statement {
     }
 
 }
+
+class ReturnStatement extends Statement {
+
+    Token token; // The Return token
+    Expression value;
+
+    ReturnStatement(this.token);
+
+    @override
+    String tokenLiteral() {
+
+        return token.literal;
+        
+    }
+
+}
