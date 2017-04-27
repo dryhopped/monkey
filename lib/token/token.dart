@@ -49,18 +49,18 @@ class Token {
         "true":   Token.True
     };
 
-    String tokenType;
+    String type;
     String literal;
 
-    Token(this.tokenType, this.literal);
+    Token(this.type, this.literal);
 
     bool operator ==(o) =>
-        o is Token && o.tokenType == tokenType && o.literal == literal;
+        o is Token && o.type == type && o.literal == literal;
 
     @override
     String toString() {
 
-        return 'Token<type: $tokenType, literal: $literal>';
+        return 'Token<type: $type, literal: $literal>';
 
     }
 
