@@ -57,6 +57,13 @@ class Token {
     bool operator ==(o) =>
         o is Token && o.tokenType == tokenType && o.literal == literal;
 
+    @override
+    String toString() {
+
+        return 'Token<type: $tokenType, literal: $literal>';
+
+    }
+
     static String lookupIdent(String ident) {
 
         String value = keywords[ident];
