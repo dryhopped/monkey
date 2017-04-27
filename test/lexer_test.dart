@@ -37,6 +37,12 @@ void main() {
             let result = add(five, ten);
             !-/*5;
             5 < 10 > 5;
+
+            if (5 < 10) {
+                return true;
+            } else {
+                return false;
+            }
         """;
 
         List<Token> expected = [
@@ -88,6 +94,23 @@ void main() {
             t(Token.Gt, ">"),
             t(Token.Int, "5"),
             t(Token.SemiColon, ";"),
+            t(Token.If, "if"),
+            t(Token.LeftParen, "("),
+            t(Token.Int, "5"),
+            t(Token.Lt, "<"),
+            t(Token.Int, "10"),
+            t(Token.RightParen, ")"),
+            t(Token.LeftBrace, "{"),
+            t(Token.Return, "return"),
+            t(Token.True, "true"),
+            t(Token.SemiColon, ";"),
+            t(Token.RightBrace, "}"),
+            t(Token.Else, "else"),
+            t(Token.LeftBrace, "{"),
+            t(Token.Return, "return"),
+            t(Token.False, "false"),
+            t(Token.SemiColon, ";"),
+            t(Token.RightBrace, "}"),
             t(Token.Eof, "␀")
         ];
 
