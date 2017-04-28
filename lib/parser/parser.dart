@@ -41,6 +41,7 @@ class Parser {
         registerPrefix(Token.False, parseBoolean);
         registerPrefix(Token.LeftParen, parseGroupedExpression);
         registerPrefix(Token.If, parseIfExpression);
+        registerPrefix(Token.Function, parseFunctionLiteral);
 
         /// Register Infix Expressions
         registerInfix(Token.Plus, parseInfixExpression);
@@ -89,6 +90,45 @@ class Parser {
         if (!expectPeek(Token.RightParen)) return null;
 
         return expression;
+
+    }
+
+    FunctionLiteral parseFunctionLiteral() {
+
+        FunctionLiteral function = new FunctionLiteral(currentToken);
+        if (!expectPeek(Token.LeftParen)) return null;
+
+        function.parameters = parseFunctionParameters();
+        if (!expectPeek(Token.LeftBrace)) return null;
+
+        function.body = parseBlockStatement();
+
+        return function;
+
+    }
+
+    List<Identifier> parseFunctionParameters() {
+
+        List<Identifier> parameters = [];
+
+        if (peekTokenIs(Token.RightParen)) {
+            nextToken();
+            return parameters;
+        }
+
+        nextToken();
+
+        parameters.add(new Identifier(currentToken, currentToken.literal));
+
+        while (peekTokenIs(Token.Comma)) {
+            nextToken();
+            nextToken();
+            parameters.add(new Identifier(currentToken, currentToken.literal));
+        }
+
+        if (!expectPeek(Token.RightParen)) return null;
+
+        return parameters;
 
     }
 
@@ -219,7 +259,7 @@ class Parser {
 
         } catch (e) {
 
-            errors.add("could not parse ${currentToken.literal} as integer.");
+            errors.add('could not parse ${currentToken.literal} as integer.');
             return null;
 
         }
@@ -286,13 +326,13 @@ class Parser {
 
     void noPrefixParseFnError(String type) {
 
-        errors.add("no prefix parse function for $type found.");
+        errors.add('no prefix parse function for $type found.');
 
     }
 
     void peekError(String type) {
 
-        errors.add("expected next token to be $type, but got ${currentToken.type}.");
+        errors.add('expected next token to be $type, but got ${currentToken.type}.');
 
     }
 
