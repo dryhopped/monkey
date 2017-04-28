@@ -24,7 +24,8 @@ class Parser {
         Token.Plus:     Precedence.Sum,
         Token.Minus:    Precedence.Sum,
         Token.Slash:    Precedence.Product,
-        Token.Asterisk: Precedence.Product
+        Token.Asterisk: Precedence.Product,
+        Token.LeftParen: Precedence.Call
     };
 
     Parser(this.lexer) {
@@ -52,6 +53,7 @@ class Parser {
         registerInfix(Token.NotEqual, parseInfixExpression);
         registerInfix(Token.Lt, parseInfixExpression);
         registerInfix(Token.Gt, parseInfixExpression);
+        registerInfix(Token.LeftParen, parseCallExpression);
 
     }
 
@@ -81,6 +83,38 @@ class Parser {
     }
 
     Boolean parseBoolean() => new Boolean(currentToken, currentTokenIs(Token.True));
+
+    CallExpression parseCallExpression(Expression function) {
+
+        CallExpression call = new CallExpression(currentToken, function);
+        call.arguments = parseCallArguments();
+
+        return call;
+
+    }
+
+    List<Expression> parseCallArguments() {
+
+        if (peekTokenIs(Token.RightParen)) {
+            nextToken();
+            return [];
+        }
+
+        List<Expression> arguments = [];
+        nextToken();
+
+        arguments.add(parseExpression(Precedence.Lowest));
+        while (peekTokenIs(Token.Comma)) {
+            nextToken();
+            nextToken();
+            arguments.add(parseExpression(Precedence.Lowest));
+        }
+
+        if (!expectPeek(Token.RightParen)) return null;
+
+        return arguments;
+
+    }
 
     Expression parseGroupedExpression() {
 
@@ -332,7 +366,7 @@ class Parser {
 
     void peekError(String type) {
 
-        errors.add('expected next token to be $type, but got ${currentToken.type}.');
+        errors.add('expected next token to be $type, but got ${peekToken.type}.');
 
     }
 
