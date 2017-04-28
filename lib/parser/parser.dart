@@ -38,8 +38,8 @@ class Parser {
         registerPrefix(Token.Int, parseIntegerLiteral);
         registerPrefix(Token.Bang, parsePrefixExpression);
         registerPrefix(Token.Minus, parsePrefixExpression);
-        registerPrefix(Token.True, parseBoolean);
-        registerPrefix(Token.False, parseBoolean);
+        registerPrefix(Token.True, parseBooleanLiteral);
+        registerPrefix(Token.False, parseBooleanLiteral);
         registerPrefix(Token.LeftParen, parseGroupedExpression);
         registerPrefix(Token.If, parseIfExpression);
         registerPrefix(Token.Function, parseFunctionLiteral);
@@ -82,7 +82,7 @@ class Parser {
 
     }
 
-    Boolean parseBoolean() => new Boolean(currentToken, currentTokenIs(Token.True));
+    BooleanLiteral parseBooleanLiteral() => new BooleanLiteral(currentToken, currentTokenIs(Token.True));
 
     CallExpression parseCallExpression(Expression function) {
 

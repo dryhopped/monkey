@@ -104,8 +104,8 @@ void main() {
 
     test('test boolean expression', () {
 
-        testBooleanParsing('true;', true);
-        testBooleanParsing('false;', false);
+        testBooleanLiteralParsing('true;', true);
+        testBooleanLiteralParsing('false;', false);
 
     });
 

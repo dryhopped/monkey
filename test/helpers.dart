@@ -4,6 +4,8 @@ import 'package:monkey/ast/ast.dart';
 import 'package:monkey/token/token.dart';
 import 'package:monkey/lexer/lexer.dart';
 import 'package:monkey/parser/parser.dart';
+import 'package:monkey/object/object.dart';
+import 'package:monkey/interpreter/interpreter.dart';
 
 Token t(String type, String literal) {
 
@@ -79,20 +81,20 @@ ExpressionStatement parseExpressionStatement(String input) {
 
 }
 
-void testBooleanLiteral(Expression expression, bool expected) {
+void testBooleanLiteralLiteral(Expression expression, bool expected) {
 
-    expect(expression, new isInstanceOf<Boolean>());
-    Boolean boolean = expression;
+    expect(expression, new isInstanceOf<BooleanLiteral>());
+    BooleanLiteral boolean = expression;
 
     expect(boolean.value, equals(expected));
     expect(boolean.tokenLiteral(), equals(expected.toString()));
 
 }
 
-void testBooleanParsing(String input, bool expected) {
+void testBooleanLiteralParsing(String input, bool expected) {
 
     ExpressionStatement statement = parseExpressionStatement(input);
-    testBooleanLiteral(statement.expression, expected);
+    testBooleanLiteralLiteral(statement.expression, expected);
 
 }
 
@@ -166,7 +168,7 @@ void testLiteralExpression(Expression expression, Object expected) {
     } else if (expected is String) {
         testIdentifier(expression, expected);
     } else if (expected is bool) {
-        testBooleanLiteral(expression, expected);
+        testBooleanLiteralLiteral(expression, expected);
     } else {
         fail('type of expression not handled: ${expected.runtimeType}');
     }
@@ -215,5 +217,28 @@ void testFunctionParameters(String input, List<String> expectedParameters) {
     for (int i = 0; i < expectedParameters.length; i++) {
         testIdentifier(function.parameters[i], expectedParameters[i]);
     }
+
+}
+
+void testEvalInteger(String input, int expected) {
+
+    MonkeyObject evaluated = testEval(input);
+    testIntegerObject(evaluated, expected);
+
+}
+
+MonkeyObject testEval(String input) {
+
+    Parser parser = new Parser(new Lexer(input));
+    return interpret(parser.parseProgram());
+
+}
+
+void testIntegerObject(MonkeyObject object, int expected) {
+
+    expect(object, new isInstanceOf<Integer>());
+    Integer integer = object;
+
+    expect(integer.value, equals(expected));
 
 }
