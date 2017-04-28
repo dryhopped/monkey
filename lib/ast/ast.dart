@@ -36,7 +36,7 @@ class Program extends Node {
 
     String tokenLiteral() {
 
-        return statements.isEmpty ? "" : statements.first.tokenLiteral;
+        return statements.isEmpty ? '' : statements.first.tokenLiteral;
 
     }
 
@@ -71,7 +71,7 @@ class LetStatement extends Statement {
     LetStatement(Token token) : super(token);
 
     @override
-    String toString() => "${tokenLiteral()} $name = ${value ?? ''};";
+    String toString() => '${tokenLiteral()} $name = ${value ?? ''};';
 
 }
 
@@ -82,7 +82,7 @@ class ReturnStatement extends Statement {
     ReturnStatement(Token token) : super(token);
 
     @override
-    String toString() => "${tokenLiteral()} ${value ?? ''};";
+    String toString() => '${tokenLiteral()} ${value ?? ''};';
 
 }
 
@@ -93,7 +93,7 @@ class ExpressionStatement extends Statement {
     ExpressionStatement(Token token) : super(token);
 
     @override
-    String toString() => "${expression ?? ''}";
+    String toString() => '${expression ?? ''}';
 
 }
 
@@ -116,7 +116,7 @@ class PrefixExpression extends Expression {
     PrefixExpression(Token token, this.operator) : super(token);
 
     @override
-    String toString() => "($operator$right)";
+    String toString() => '($operator$right)';
 
 }
 
@@ -129,7 +129,7 @@ class InfixExpression extends Expression {
     InfixExpression(Token token, this.operator, this.left) : super(token);
 
     @override
-    String toString() => "($left $operator $right)";
+    String toString() => '($left $operator $right)';
 
 }
 
@@ -153,7 +153,7 @@ class IfExpression extends Expression {
     IfExpression(Token token) : super(token);
 
     @override
-    String toString() => "if $condition $consequence ${alternative == null ? "" : "else $alternative"}";
+    String toString() => 'if $condition $consequence ${alternative == null ? '' : 'else $alternative'}';
 
 }
 
@@ -166,4 +166,14 @@ class BlockStatement extends Statement {
     @override
     String toString() => statements.join();
 
+}
+
+class FunctionLiteral extends Expression {
+
+    List<Identifier> parameters = [];
+    BlockStatement body;
+
+    FunctionLiteral(Token token) : super(token);
+
+    @override toString() => '${tokenLiteral()}(${parameters.join(', ')}) $body';
 }

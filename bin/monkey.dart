@@ -20,7 +20,7 @@ const MONKEY_FACE = r"""             __,__
 
 void start() {
 
-    const String prompt = ">> ";
+    const String prompt = '>> ';
 
     while (true) {
 
@@ -58,8 +58,8 @@ void printParserErrors(List<String> errors) {
 
 void main() {
 
-    print("Hello! This is the Monkey Programming Language!");
-    print("Feel free to type in commands.");
+    print('Hello! This is the Monkey Programming Language!');
+    print('Feel free to type in commands.');
 
     start();
 
