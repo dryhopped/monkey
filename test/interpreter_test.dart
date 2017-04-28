@@ -3,10 +3,17 @@ import 'helpers.dart';
 
 void main() {
 
-    test('test eval integer expression', () {
+    test('test interpret integer expression', () {
 
-        testEvalInteger('5', 5);
-        testEvalInteger('10', 10);
+        testInterpretInteger('5', 5);
+        testInterpretInteger('10', 10);
+
+    });
+
+    test('test interpret boolean expression', () {
+
+        testInterpretBoolean('true', true);
+        testInterpretBoolean('false', false);
 
     });
 

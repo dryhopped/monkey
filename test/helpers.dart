@@ -220,14 +220,21 @@ void testFunctionParameters(String input, List<String> expectedParameters) {
 
 }
 
-void testEvalInteger(String input, int expected) {
+void testInterpretInteger(String input, int expected) {
 
-    MonkeyObject evaluated = testEval(input);
+    MonkeyObject evaluated = testInterpret(input);
     testIntegerObject(evaluated, expected);
 
 }
 
-MonkeyObject testEval(String input) {
+void testInterpretBoolean(String input, bool expected) {
+
+    MonkeyObject evaluated = testInterpret(input);
+    testBooleanObject(evaluated, expected);
+
+}
+
+MonkeyObject testInterpret(String input) {
 
     Parser parser = new Parser(new Lexer(input));
     return interpret(parser.parseProgram());
@@ -237,8 +244,17 @@ MonkeyObject testEval(String input) {
 void testIntegerObject(MonkeyObject object, int expected) {
 
     expect(object, new isInstanceOf<Integer>());
-    Integer integer = object;
 
+    Integer integer = object;
     expect(integer.value, equals(expected));
+
+}
+
+testBooleanObject(MonkeyObject object, bool expected) {
+
+    expect(object, new isInstanceOf<Boolean>());
+
+    Boolean boolean = object;
+    expect(boolean.value, equals(expected));
 
 }

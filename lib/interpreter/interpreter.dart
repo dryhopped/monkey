@@ -8,6 +8,7 @@ MonkeyObject interpret(Node node) {
     if (node is Program) return interpretStatements(node.statements);
     else if (node is ExpressionStatement) return interpret(node.expression);
     else if (node is IntegerLiteral) return new Integer(node.value);
+    else if (node is BooleanLiteral) return new Boolean(node.value);
 
     return null;
 

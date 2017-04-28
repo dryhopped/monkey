@@ -39,7 +39,8 @@ void start() {
             continue;
         }
 
-        print(interpret(program));
+        MonkeyObject result = interpret(program);
+        if (result != null) print(result.inspect());
 
     }
 
