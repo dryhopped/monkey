@@ -24,16 +24,10 @@ void main() {
 
     test("test identifier expression", () {
 
-        Program program = parseProgramChecked('foobar;');
-
-        expectNumStatements(program, 1);
-
-        expect(program.statements.first, new isInstanceOf<ExpressionStatement>());
-        ExpressionStatement statement = program.statements.first;
-
+        ExpressionStatement statement = parseExpressionStatement('foobar;');
         expect(statement.expression, new isInstanceOf<Identifier>());
-        Identifier ident = statement.expression;
 
+        Identifier ident = statement.expression;
         expect(ident.value, equals('foobar'));
         expect(ident.tokenLiteral(), equals('foobar'));
 
@@ -41,13 +35,7 @@ void main() {
 
     test("test literal integer expression", () {
 
-        Program program = parseProgramChecked('5;');
-
-        expectNumStatements(program, 1);
-
-        expect(program.statements.first, new isInstanceOf<ExpressionStatement>());
-        ExpressionStatement statement = program.statements.first;
-
+        ExpressionStatement statement = parseExpressionStatement('5;');
         testIntegerLiteral(statement.expression, 5);
 
     });
@@ -311,12 +299,7 @@ void testPrecedence(String input, String expected) {
 
 void testPrefix(String input, String operator, Object expectedValue) {
 
-    Program program = parseProgramChecked(input);
-
-    expectNumStatements(program, 1);
-
-    expect(program.statements.first, new isInstanceOf<ExpressionStatement>());
-    ExpressionStatement statement = program.statements.first;
+    ExpressionStatement statement = parseExpressionStatement(input);
 
     expect(statement.expression, new isInstanceOf<PrefixExpression>());
     PrefixExpression expression = statement.expression;
