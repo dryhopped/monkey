@@ -122,7 +122,7 @@ void main() {
             t(Token.NotEqual, "!="),
             t(Token.Int, "9"),
             t(Token.SemiColon, ";"),
-            t(Token.Eof, "␀")
+            t(Token.Eof, null)
         ];
 
         testLexer(expected, input);
