@@ -39,6 +39,7 @@ class Parser {
         registerPrefix(Token.Minus, parsePrefixExpression);
         registerPrefix(Token.True, parseBoolean);
         registerPrefix(Token.False, parseBoolean);
+        registerPrefix(Token.LeftParen, parseGroupedExpression);
 
         /// Register Infix Expressions
         registerInfix(Token.Plus, parseInfixExpression);
@@ -60,6 +61,17 @@ class Parser {
     }
 
     Boolean parseBoolean() => new Boolean(currentToken, currentTokenIs(Token.True));
+
+    Expression parseGroupedExpression() {
+
+        nextToken();
+
+        Expression expression = parseExpression(Precedence.Lowest);
+        if (!expectPeek(Token.RightParen)) return null;
+
+        return expression;
+
+    }
 
     Program parseProgram() {
 
