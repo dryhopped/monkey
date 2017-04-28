@@ -203,3 +203,17 @@ void testReturnStatementParsing(String input, Object expectedValue) {
     testLiteralExpression(returnStatement.value, expectedValue);
 
 }
+
+void testFunctionParameters(String input, List<String> expectedParameters) {
+
+    ExpressionStatement statement = parseExpressionStatement(input);
+    expect(statement.expression, new isInstanceOf<FunctionLiteral>());
+
+    FunctionLiteral function = statement.expression;
+    expect(function.parameters.length, equals(expectedParameters.length));
+
+    for (int i = 0; i < expectedParameters.length; i++) {
+        testIdentifier(function.parameters[i], expectedParameters[i]);
+    }
+
+}

@@ -157,4 +157,13 @@ void main() {
 
     });
 
+    test('test function parameter parsing', () {
+
+        testFunctionParameters('fn() {};', []);
+        testFunctionParameters('fn(x) {};', ['x']);
+        testFunctionParameters('fn(x, y) {};', ['x', 'y']);
+        testFunctionParameters('fn(x, y, z) {};', ['x', 'y', 'z']);
+
+    });
+
 }
