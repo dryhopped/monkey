@@ -366,7 +366,7 @@ class Parser {
 
     void peekError(String type) {
 
-        errors.add('expected next token to be $type, but got ${currentToken.type}.');
+        errors.add('expected next token to be $type, but got ${peekToken.type}.');
 
     }
 
