@@ -21,9 +21,6 @@ class Lexer {
     static final int Z = code('Z');
     static final int _ = code('_');
 
-    /// Code point for null character \0
-    static final int nil = code('␀');
-
     String input;
 
     /// current position in input (points to current char)
@@ -44,7 +41,7 @@ class Lexer {
     void readChar() {
 
         if (readPosition >= input.length) {
-            ch = '␀';
+            ch = null;
         } else {
             ch = input[readPosition];
         }
@@ -60,73 +57,78 @@ class Lexer {
 
         Token token;
 
-        switch (ch) {
+        if (ch == null) {
 
-            case '=':
-                if (peekChar() == '=') {
-                    String temp = ch;
-                    readChar();
-                    token = new Token(Token.Equal, temp + ch);
-                } else {
-                    token = new Token(Token.Assign, ch);
-                }
-                break;
-            case ';':
-                token = new Token(Token.SemiColon, ch);
-                break;
-            case '(':
-                token = new Token(Token.LeftParen, ch);
-                break;
-            case ')':
-                token = new Token(Token.RightParen, ch);
-                break;
-            case ',':
-                token = new Token(Token.Comma, ch);
-                break;
-            case '+':
-                token = new Token(Token.Plus, ch);
-                break;
-            case '-':
-                token = new Token(Token.Minus, ch);
-                break;
-            case '!':
-                if (peekChar() == '=') {
-                    String temp = ch;
-                    readChar();
-                    token = new Token(Token.NotEqual, temp + ch);
-                } else {
-                    token = new Token(Token.Bang, ch);
-                }
-                break;
-            case '/':
-                token = new Token(Token.Slash, ch);
-                break;
-            case '*':
-                token = new Token(Token.Asterisk, ch);
-                break;
-            case '<':
-                token = new Token(Token.Lt, ch);
-                break;
-            case '>':
-                token = new Token(Token.Gt, ch);
-                break;
-            case '{':
-                token = new Token(Token.LeftBrace, ch);
-                break;
-            case '}':
-                token = new Token(Token.RightBrace, ch);
-                break;
-            case '␀':
-                token = new Token(Token.Eof, ch);
-                break;
-            default:
-                if (isDigit(ch)) {
-                    return new Token(Token.Int, readInteger());
-                } else if (isAlpha(ch)) {
-                    return readIdentifier();
-                }
+            token = new Token(Token.Eof, ch);
 
-                return new Token(Token.Illegal, ch);
+        } else {
+
+            switch (ch) {
+
+                case '=':
+                    if (peekChar() == '=') {
+                        String temp = ch;
+                        readChar();
+                        token = new Token(Token.Equal, temp + ch);
+                    } else {
+                        token = new Token(Token.Assign, ch);
+                    }
+                    break;
+                case ';':
+                    token = new Token(Token.SemiColon, ch);
+                    break;
+                case '(':
+                    token = new Token(Token.LeftParen, ch);
+                    break;
+                case ')':
+                    token = new Token(Token.RightParen, ch);
+                    break;
+                case ',':
+                    token = new Token(Token.Comma, ch);
+                    break;
+                case '+':
+                    token = new Token(Token.Plus, ch);
+                    break;
+                case '-':
+                    token = new Token(Token.Minus, ch);
+                    break;
+                case '!':
+                    if (peekChar() == '=') {
+                        String temp = ch;
+                        readChar();
+                        token = new Token(Token.NotEqual, temp + ch);
+                    } else {
+                        token = new Token(Token.Bang, ch);
+                    }
+                    break;
+                case '/':
+                    token = new Token(Token.Slash, ch);
+                    break;
+                case '*':
+                    token = new Token(Token.Asterisk, ch);
+                    break;
+                case '<':
+                    token = new Token(Token.Lt, ch);
+                    break;
+                case '>':
+                    token = new Token(Token.Gt, ch);
+                    break;
+                case '{':
+                    token = new Token(Token.LeftBrace, ch);
+                    break;
+                case '}':
+                    token = new Token(Token.RightBrace, ch);
+                    break;
+                default:
+                    if (isDigit(ch)) {
+                        return new Token(Token.Int, readInteger());
+                    } else if (isAlpha(ch)) {
+                        return readIdentifier();
+                    }
+
+                    return new Token(Token.Illegal, ch);
+
+            }
 
         }
 
@@ -136,6 +138,8 @@ class Lexer {
     }
 
     bool isAlpha(String ch) {
+
+        if (ch == null) return false;
 
         int c = ch.codeUnitAt(0);
 
@@ -149,15 +153,9 @@ class Lexer {
 
     }
 
-    bool isAtEnd() {
-
-        int c = ch.codeUnitAt(0);
-
-        return c == nil;
-
-    }
-
     bool isDigit(String ch) {
+
+        if (ch == null) return false;
 
         int c = ch.codeUnitAt(0);
 
@@ -166,6 +164,8 @@ class Lexer {
     }
 
     bool isWhitespace(String ch) {
+
+        if (ch == null) return false;
 
         int c = ch.codeUnitAt(0);
 
@@ -187,7 +187,7 @@ class Lexer {
 
         int start = position;
 
-        while(isAlphaNumeric(ch) && !isAtEnd()) {
+        while(isAlphaNumeric(ch)) {
             readChar();
         }
 
@@ -201,7 +201,7 @@ class Lexer {
 
         int start = position;
 
-        while (isDigit(ch) && !isAtEnd()) {
+        while (isDigit(ch)) {
             readChar();
         }
 
@@ -211,7 +211,7 @@ class Lexer {
 
     void skipWhitespace() {
 
-        while (isWhitespace(ch) && !isAtEnd()) {
+        while (isWhitespace(ch)) {
             readChar();
         }
 
