@@ -32,11 +32,15 @@ class Parser {
         nextToken();
         nextToken();
 
+        /// Register Prefix Expressions
         registerPrefix(Token.Ident, parseIdentifier);
         registerPrefix(Token.Int, parseIntegerLiteral);
         registerPrefix(Token.Bang, parsePrefixExpression);
         registerPrefix(Token.Minus, parsePrefixExpression);
+        registerPrefix(Token.True, parseBoolean);
+        registerPrefix(Token.False, parseBoolean);
 
+        /// Register Infix Expressions
         registerInfix(Token.Plus, parseInfixExpression);
         registerInfix(Token.Minus, parseInfixExpression);
         registerInfix(Token.Slash, parseInfixExpression);
@@ -54,6 +58,8 @@ class Parser {
         peekToken = lexer.nextToken();
 
     }
+
+    Boolean parseBoolean() => new Boolean(currentToken, currentTokenIs(Token.True));
 
     Program parseProgram() {
 
@@ -175,9 +181,11 @@ class Parser {
         statement.name = new Identifier(currentToken, currentToken.literal);
 
         if (!expectPeek(Token.Assign)) return null;
+        nextToken();
 
-        // TODO: We're skipping the expressions until we encounter a semicolon.
-        while (!currentTokenIs(Token.SemiColon)) nextToken();
+        statement.value = parseExpression(Precedence.Lowest);
+
+        if (peekTokenIs(Token.SemiColon)) nextToken();
 
         return statement;
 
@@ -199,8 +207,8 @@ class Parser {
         ReturnStatement statement = new ReturnStatement(currentToken);
         nextToken();
 
-        // TODO: We're skipping the expressions until we encounter a semicolon.
-        while (!currentTokenIs(Token.SemiColon)) nextToken();
+        statement.value = parseExpression(Precedence.Lowest);
+        if (peekTokenIs(Token.SemiColon)) nextToken();
 
         return statement;
 
@@ -208,11 +216,7 @@ class Parser {
 
     Precedence currentPrecedence() => precedences[currentToken.type] ?? Precedence.Lowest;
 
-    bool currentTokenIs(String type) {
-
-        return currentToken.type == type;
-
-    }
+    bool currentTokenIs(String type) => currentToken.type == type;
 
     bool expectPeek(String type) {
 
@@ -240,11 +244,7 @@ class Parser {
 
     Precedence peekPrecedence() => precedences[peekToken.type] ?? Precedence.Lowest;
 
-    bool peekTokenIs(String type) {
-
-        return peekToken.type == type;
-
-    }
+    bool peekTokenIs(String type) => peekToken.type == type;
 
     void registerInfix(String type, Function infixParseFn) {
 
