@@ -40,6 +40,7 @@ class Parser {
         registerPrefix(Token.True, parseBoolean);
         registerPrefix(Token.False, parseBoolean);
         registerPrefix(Token.LeftParen, parseGroupedExpression);
+        registerPrefix(Token.If, parseIfExpression);
 
         /// Register Infix Expressions
         registerInfix(Token.Plus, parseInfixExpression);
@@ -57,6 +58,24 @@ class Parser {
 
         currentToken = peekToken;
         peekToken = lexer.nextToken();
+
+    }
+
+    BlockStatement parseBlockStatement() {
+
+        BlockStatement block = new BlockStatement(currentToken);
+        nextToken();
+
+        while (!currentTokenIs(Token.RightBrace)) {
+
+            Statement statement = parseStatement();
+
+            if (statement != null) block.statements.add(statement);
+            nextToken();
+
+        }
+
+        return block;
 
     }
 
@@ -151,6 +170,29 @@ class Parser {
     }
 
     Expression parseIdentifier() => new Identifier(currentToken, currentToken.literal);
+
+    IfExpression parseIfExpression() {
+
+        IfExpression expression = new IfExpression(currentToken);
+        if (!expectPeek(Token.LeftParen)) return null;
+        nextToken();
+
+        expression.condition = parseExpression(Precedence.Lowest);
+        if (!expectPeek(Token.RightParen)) return null;
+        if (!expectPeek(Token.LeftBrace)) return null;
+
+        expression.consequence = parseBlockStatement();
+        if (peekTokenIs(Token.Else)) {
+            nextToken();
+
+            if (!expectPeek(Token.LeftBrace)) return null;
+
+            expression.alternative = parseBlockStatement();
+        }
+
+        return expression;
+
+    }
 
     InfixExpression parseInfixExpression(Expression left) {
 

@@ -1,5 +1,4 @@
 enum Precedence {
-    _,
     Lowest,
     /// == !=
     Equals,

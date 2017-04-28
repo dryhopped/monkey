@@ -8,49 +8,17 @@ void main() {
 
     test("test let statements", () {
 
-        Program program = parseProgramChecked("""
-            let x = 5;
-            let y = 10;
-            let foobar = 838383;
-        """);
-
-        expect(program, isNotNull, reason: "parseProgram() returned null");
-        expectNumStatements(program, 3);
-
-        List<String> identifiers = ['x', 'y', 'foobar'];
-
-        program.statements.asMap().forEach((i, statement) {
-
-            expect(statement.tokenLiteral(), equals('let'));
-
-            LetStatement letStatement = statement;
-
-            expect(letStatement.name.value, equals(identifiers[i]));
-            expect(letStatement.name.tokenLiteral(), equals(identifiers[i]));
-
-        });
+        testLetStatementParsing("let x = 5;", "x", 5);
+        testLetStatementParsing("let y = true;", "y", true);
+        testLetStatementParsing("let foobar = y;", "foobar", "y");
 
     });
 
     test("test return statements", () {
 
-        Program program = parseProgramChecked("""
-            return 5;
-            return 10;
-            return 993322;
-        """);
-
-        expect(program, isNotNull, reason: "parseProgram() returned null");
-        expectNumStatements(program, 3);
-
-        List<String> identifiers = ['x', 'y', 'foobar'];
-
-        program.statements.forEach((statement) {
-
-            expect(statement, new isInstanceOf<ReturnStatement>());
-            expect(statement.tokenLiteral(), equals('return'));
-
-        });
+        testReturnStatementParsing("return 5;", 5);
+        testReturnStatementParsing("return true;", true);
+        testReturnStatementParsing("return foobar;", "foobar");
 
     });
 
@@ -151,6 +119,40 @@ void main() {
 
     });
 
+    test("test if expression", () {
+
+        ExpressionStatement statement = parseExpressionStatement('if (x < y) { x }');
+        expect(statement.expression, new isInstanceOf<IfExpression>());
+
+        IfExpression expression = statement.expression;
+        testInfixExpression(expression.condition, "x", "<", "y");
+        expect(expression.consequence.statements.length, equals(1));
+
+        ExpressionStatement consequence = expression.consequence.statements.first;
+        testIdentifier(consequence.expression, "x");
+
+        expect(expression.alternative, isNull);
+
+    });
+
+    test('test if/else expression', () {
+
+        ExpressionStatement statement = parseExpressionStatement('if (x < y) { x } else { y }');
+        expect(statement.expression, new isInstanceOf<IfExpression>());
+
+        IfExpression expression = statement.expression;
+        testInfixExpression(expression.condition, "x", "<", "y");
+        expect(expression.consequence.statements.length, equals(1));
+
+        ExpressionStatement consequence = expression.consequence.statements.first;
+        testIdentifier(consequence.expression, "x");
+        expect(expression.alternative.statements.length, equals(1));
+
+        ExpressionStatement alternative = expression.alternative.statements.first;
+        testIdentifier(alternative.expression, "y");
+
+    });
+
 }
 
 void checkParserErrors(Parser parser) {
@@ -194,6 +196,17 @@ Statement parseSingleStatement(String input) {
 
 }
 
+ExpressionStatement parseExpressionStatement(String input) {
+
+    Statement statement = parseSingleStatement(input);
+    expect(statement, new isInstanceOf<ExpressionStatement>());
+
+    ExpressionStatement expressionStatement = statement;
+
+    return expressionStatement;
+
+}
+
 void testBooleanLiteral(Expression expression, bool expected) {
 
     expect(expression, new isInstanceOf<Boolean>());
@@ -206,11 +219,8 @@ void testBooleanLiteral(Expression expression, bool expected) {
 
 void testBooleanParsing(String input, bool expected) {
 
-    Statement statement = parseSingleStatement(input);
-    expect(statement, new isInstanceOf<ExpressionStatement>());
-
-    ExpressionStatement expressionStatement = statement;
-    testBooleanLiteral(expressionStatement.expression, expected);
+    ExpressionStatement statement = parseExpressionStatement(input);
+    testBooleanLiteral(statement.expression, expected);
 
 }
 
@@ -235,19 +245,45 @@ void testIntegerLiteral(Expression expression, int integerValue) {
 
 void testInfix(String input, Object leftValue, String operator, Object rightValue) {
 
-    Program program = parseProgramChecked(input);
+    ExpressionStatement expressionStatement = parseExpressionStatement(input);
+    expect(expressionStatement.expression, new isInstanceOf<InfixExpression>());
 
-    expectNumStatements(program, 1);
-
-    expect(program.statements.first, new isInstanceOf<ExpressionStatement>());
-    ExpressionStatement statement = program.statements.first;
-
-    expect(statement.expression, new isInstanceOf<InfixExpression>());
-    InfixExpression expression = statement.expression;
-
+    InfixExpression expression = expressionStatement.expression;
     testLiteralExpression(expression.left, leftValue);
+
     expect(expression.operator, equals(operator));
     testLiteralExpression(expression.right, rightValue);
+
+}
+
+void testInfixExpression(Expression expression, Object left, String operator, Object right) {
+
+    expect(expression, new isInstanceOf<InfixExpression>());
+
+    InfixExpression infixExpression = expression;
+    testLiteralExpression(infixExpression.left, left);
+    expect(infixExpression.operator, equals(operator));
+    testLiteralExpression(infixExpression.right, right);
+
+}
+
+void testLetStatementParsing(String input, String expectedIdentifier, Object expectedValue) {
+
+    Statement statement = parseSingleStatement(input);
+
+    testLetStatement(statement, expectedIdentifier);
+    testLiteralExpression((statement as LetStatement).value, expectedValue);
+
+}
+
+void testLetStatement(Statement statement, String name) {
+
+    expect(statement.tokenLiteral(), equals('let'));
+    expect(statement, new isInstanceOf<LetStatement>());
+
+    LetStatement letStatement = statement;
+    expect(letStatement.name.value, equals(name));
+    expect(letStatement.name.tokenLiteral(), equals(name));
 
 }
 
@@ -287,5 +323,16 @@ void testPrefix(String input, String operator, Object expectedValue) {
 
     expect(expression.operator, equals(operator));
     testLiteralExpression(expression.right, expectedValue);
+
+}
+
+void testReturnStatementParsing(String input, Object expectedValue) {
+
+    Statement statement = parseSingleStatement(input);
+    expect(statement.tokenLiteral(), equals('return'));
+    expect(statement, new isInstanceOf<ReturnStatement>());
+
+    ReturnStatement returnStatement = statement;
+    testLiteralExpression(returnStatement.value, expectedValue);
 
 }
