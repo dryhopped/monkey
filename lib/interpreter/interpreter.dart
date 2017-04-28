@@ -38,6 +38,9 @@ MonkeyObject interpretPrefixExpression(String operator, MonkeyObject right) {
         case '!':
             return interpretBangOperatorExpression(right);
 
+        case '-':
+            return interpretMinusPrefixOperatorExpression(right);
+
         default:
             return null;
 
@@ -52,6 +55,14 @@ MonkeyObject interpretBangOperatorExpression(MonkeyObject right) {
     else if (right == NULL) return TRUE; // null evaluates to false, not null is true
 
     return FALSE; // false and null are false, all other values are true
+
+}
+
+MonkeyObject interpretMinusPrefixOperatorExpression(MonkeyObject right) {
+
+    if (right.type != INTEGER_OBJ) return null;
+
+    return new Integer(-(right as Integer).value);
 
 }
 

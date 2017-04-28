@@ -7,6 +7,8 @@ void main() {
 
         testInterpretInteger('5', 5);
         testInterpretInteger('10', 10);
+        testInterpretInteger('-5', -5);
+        testInterpretInteger('-10', -10);
 
     });
 
