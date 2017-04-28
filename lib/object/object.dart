@@ -8,7 +8,7 @@ abstract class MonkeyObject {
 
     final String type;
 
-    MonkeyObject(this.type);
+    const MonkeyObject(this.type);
 
     String inspect();
 
@@ -27,20 +27,18 @@ class Integer extends MonkeyObject {
 
 class Boolean extends MonkeyObject {
 
-    bool value;
+    final bool value;
 
-    Boolean(this.value) : super(BOOLEAN_OBJ);
+    const Boolean(this.value) : super(BOOLEAN_OBJ);
 
     @override
     String inspect() => '$value';
 
 }
 
-class Null extends MonkeyObject {
+class MonkeyNull extends MonkeyObject {
 
-    bool value;
-
-    Null(this.value) : super(NULL_OBJ);
+    const MonkeyNull() : super(NULL_OBJ);
 
     @override
     String inspect() => 'null';

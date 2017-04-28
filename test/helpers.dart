@@ -258,3 +258,10 @@ testBooleanObject(MonkeyObject object, bool expected) {
     expect(boolean.value, equals(expected));
 
 }
+
+void testBangOperator(String input, bool expected) {
+
+    MonkeyObject evaluated = testInterpret(input);
+    testBooleanObject(evaluated, expected);
+
+}

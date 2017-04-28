@@ -17,4 +17,15 @@ void main() {
 
     });
 
+    test('test bang operator', () {
+
+        testBangOperator('!true', false);
+        testBangOperator('!false', true);
+        testBangOperator('!5', false);
+        testBangOperator('!!true', true);
+        testBangOperator('!!false', false);
+        testBangOperator('!!5', true);
+
+    });
+
 }

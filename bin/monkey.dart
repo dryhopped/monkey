@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:monkey/ast/ast.dart';
 import 'package:monkey/lexer/lexer.dart';
 import 'package:monkey/parser/parser.dart';
+import 'package:monkey/object/object.dart';
 import 'package:monkey/interpreter/interpreter.dart';
 
 const MONKEY_FACE = r"""             __,__
